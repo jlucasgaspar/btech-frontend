@@ -4,7 +4,7 @@ type Pages = 'login' | 'signup' | 'dashboard';
 
 type CtxState = {
   currentPage: Pages;
-  setCurrentPage: Dispatch<SetStateAction<Pages>>
+  setCurrentPage: Dispatch<SetStateAction<Pages>>;
 }
 
 type Props = {

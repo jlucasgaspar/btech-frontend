@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import UserContextProvider from './user';
+import ProjectsAndTasksContextProvider from './projects-tasks';
 import GlobalContextProvider from './global';
 
 type Props = {
@@ -9,7 +10,9 @@ type Props = {
 export const ContextProvider = ({ children }: Props) => (
   <GlobalContextProvider>
     <UserContextProvider>
-      {children}
+      <ProjectsAndTasksContextProvider>
+        {children}
+      </ProjectsAndTasksContextProvider>
     </UserContextProvider>
   </GlobalContextProvider>
 );

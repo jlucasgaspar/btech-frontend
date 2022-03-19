@@ -3,7 +3,7 @@ import { User } from '../models';
 
 type CtxState = {
   user: User;
-  setUser: Dispatch<SetStateAction<User>>
+  setUser: Dispatch<SetStateAction<User>>;
 }
 
 type Props = {

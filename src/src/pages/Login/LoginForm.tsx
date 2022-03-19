@@ -35,7 +35,7 @@ export const LoginForm = () => {
 
     const { user, jwt } = result.data;
 
-    localStorage.setItem('bolttech::jwt', JSON.stringify(jwt));
+    localStorage.setItem('bolttech::jwt', jwt);
 
     setUser(user);
 
