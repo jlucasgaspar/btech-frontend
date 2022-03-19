@@ -1,7 +1,17 @@
-import { Login } from './src/pages/Login';
+import CssBaseline from '@mui/material/CssBaseline';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { Toaster } from 'react-hot-toast';
+import { PagesProvider } from './src/pages';
+import { ContextProvider } from './src/contexts';
 
-export const App = () => {
-  return (
-    <Login />
-  );
-}
+const theme = createTheme();
+
+export const App = () => (
+  <ContextProvider>
+    <ThemeProvider theme={theme}>
+      <Toaster position="top-right" />
+      <CssBaseline />
+      <PagesProvider />
+    </ThemeProvider>
+  </ContextProvider>
+);

@@ -8,25 +8,34 @@ import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useForm } from 'react-hook-form';
 
-import { LoginApiResult, LoginFormData } from './types';
-import { loginResolver } from './utils';
-
+import { SignUpApiResult, SignUpFormData } from './types';
+import { signUpResolver } from './utils';
 import { makeHttpRequest } from '../../services/api';
 import { useGlobalContext } from '../../contexts/global';
 import { useUserContext } from '../../contexts/user';
 
-const resolver = loginResolver();
+const resolver = signUpResolver();
 
-export const LoginForm = () => {
+export const SignUpForm = () => {
   const [isLoading, setLoading] = useState(false);
-  const { handleSubmit, formState, register } = useForm<LoginFormData>({ resolver });
+  const { handleSubmit, formState, register, setError } = useForm<SignUpFormData>({ resolver });
   const { setCurrentPage } = useGlobalContext();
   const { setUser } = useUserContext();
 
-  const handleLogin = handleSubmit(async ({ email, password }) => {
+  const handleSignUp = handleSubmit(async ({ email, password, name, passwordConfirmation }) => {
+    if (password !== passwordConfirmation) {
+      setError('passwordConfirmation', { message: 'Password confirmation is different.' });
+      return;
+    }
+
     setLoading(true);
 
-    const result = await makeHttpRequest<LoginApiResult>('post', '/users/login', { email, password });
+    const result = await makeHttpRequest<SignUpApiResult>('post', '/users/signup', {
+      passwordConfirmation,
+      password,
+      email,
+      name,
+    });
 
     if (result.type === 'fail') {
       setLoading(false);
@@ -44,6 +53,19 @@ export const LoginForm = () => {
 
   return (
     <Box component="form" sx={{ mt: 1 }}>
+      <TextField
+        margin="normal"
+        required
+        fullWidth
+        id="name"
+        label="Name"
+        autoComplete="name"
+        autoFocus
+        error={Boolean(formState.errors.name)}
+        helperText={formState.errors.name?.message}
+        disabled={isLoading}
+        {...register('name')}
+      />
       <TextField
         margin="normal"
         required
@@ -70,23 +92,36 @@ export const LoginForm = () => {
         disabled={isLoading}
         {...register('password')}
       />
+      <TextField
+        margin="normal"
+        required
+        fullWidth
+        label="Password confirmation"
+        type="password"
+        id="passwordConfirmation"
+        autoComplete="current-passwordConfirmation"
+        error={Boolean(formState.errors.passwordConfirmation)}
+        helperText={formState.errors.passwordConfirmation?.message}
+        disabled={isLoading}
+        {...register('passwordConfirmation')}
+      />
       <Button
         type="submit"
         fullWidth
         variant="contained"
         sx={{ mt: 3, mb: 2 }}
-        onClick={handleLogin}
+        onClick={handleSignUp}
         disabled={isLoading}
       >
-        Login
+        Sign up
       </Button>
       <Grid container justifyContent="center">
         <Grid item>
           <Link href="#" variant="body2" onClick={e => {
             e.preventDefault();
-            setCurrentPage('signup');
+            setCurrentPage('login');
           }}>
-            Don't have an account? Sign Up
+            Don't have an account? Login
           </Link>
         </Grid>
       </Grid>

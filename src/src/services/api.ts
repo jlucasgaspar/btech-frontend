@@ -17,7 +17,7 @@ export const makeHttpRequest = async <T>(
   url: string,
   body?: any
 ): Promise<Response<T>> => {
-  const jwtToken = localStorage.getItem('bolttech::jwtToken');
+  const jwtToken = localStorage.getItem('bolttech::jwt');
 
   const Authorization = jwtToken ? `Bearer ${jwtToken}` : '';
   const baseURL = REACT_APP_API_URL;

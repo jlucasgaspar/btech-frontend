@@ -3,11 +3,11 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { useEffect, useState } from 'react';
-import { LoginForm } from './LoginForm';
+import { SignUpForm } from './SignUpForm';
 import { useGlobalContext } from '../../contexts/global';
 
-export const Login = () => {
-  const [isLoading, setLoading] = useState(false);
+export const SignUp = () => {
+  const [isLoading, setLoading] = useState(true);
   const { setCurrentPage } = useGlobalContext();
 
   useEffect(() => {
@@ -48,9 +48,9 @@ export const Login = () => {
             alignItems: 'center',
           }}
         >
-          <Typography component="h1" variant="h5">Login</Typography>
+          <Typography component="h1" variant="h5">Sign up</Typography>
 
-          <LoginForm />
+          <SignUpForm />
         </Box>
       </Grid>
     </Grid>
