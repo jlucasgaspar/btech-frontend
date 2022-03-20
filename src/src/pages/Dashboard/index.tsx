@@ -24,7 +24,10 @@ export const Dashboard = () => {
 
     makeHttpRequest<User>('get', '/users/me')
       .then(res => {
-        if (res.type === 'fail') setCurrentPage('login');
+        if (res.type === 'fail') {
+          localStorage.removeItem('bolttech::jwt');
+          setCurrentPage('login');
+        }
         else setUser(res.data);
       })
       .finally(() => setLoading(false));
