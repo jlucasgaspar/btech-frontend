@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-const { REACT_APP_API_URL } = process.env;
-
 type Method = 'post' | 'put' | 'delete' | 'get';
 
 type Response<T> = {
@@ -20,7 +18,7 @@ export const makeHttpRequest = async <T>(
   const jwtToken = localStorage.getItem('bolttech::jwt');
 
   const Authorization = jwtToken ? `Bearer ${jwtToken}` : '';
-  const baseURL = REACT_APP_API_URL;
+  const baseURL = 'https://bolttech-api.herokuapp.com';
 
   const api = axios.create({ baseURL, headers: { Authorization } });
 
