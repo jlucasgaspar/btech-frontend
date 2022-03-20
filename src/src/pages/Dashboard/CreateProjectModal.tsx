@@ -1,7 +1,7 @@
 
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Modal } from '../../components/Modal';
 import { makeHttpRequest } from '../../services/api';
 import { useProjectsAndTasksContext } from '../../contexts/projects-tasks';
@@ -10,13 +10,20 @@ import { Project } from '../../models';
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  defaultValue?: string;
+  isUpdate?: boolean;
+  idForUpdate?: string;
 }
 
-export const CreateProjectModal = ({ isOpen, onClose }: Props) => {
+export const CreateProjectModal = ({ isOpen, onClose, defaultValue, isUpdate, idForUpdate }: Props) => {
   const [isLoading, setLoading] = useState(false);
-  const [projectName, setProjectName] = useState('');
+  const [projectName, setProjectName] = useState(defaultValue || '');
   const [error, setError] = useState('');
   const { setProjectsAndTasks, projectsAndTasks } = useProjectsAndTasksContext();
+
+  useEffect(() => {
+    if (defaultValue) setProjectName(defaultValue);
+  }, [defaultValue]);
 
   const handleCreateProject = useCallback(async () => {
     if (!projectName) {
@@ -32,7 +39,10 @@ export const CreateProjectModal = ({ isOpen, onClose }: Props) => {
 
     setLoading(true);
 
-    const result = await makeHttpRequest<Project>('post', '/projects', { name: projectName });
+    const method = isUpdate ? 'put' : 'post';
+    const data = isUpdate ? { name: projectName, _id: idForUpdate } : { name: projectName }
+
+    const result = await makeHttpRequest<Project>(method, '/projects', data);
 
     if (result.type === 'fail') {
       setError(result.error);
@@ -46,7 +56,8 @@ export const CreateProjectModal = ({ isOpen, onClose }: Props) => {
     ]);
 
     setLoading(false);
-  }, [projectName, setProjectsAndTasks, projectsAndTasks]);
+    onClose();
+  }, [onClose, projectName, projectsAndTasks, setProjectsAndTasks, idForUpdate, isUpdate]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
