@@ -5,6 +5,7 @@ import { useUserContext } from '../../contexts/user';
 import { makeHttpRequest } from '../../services/api';
 import { User } from '../../models';
 import { ProjectsAndTasksList } from './ProjectsAndTasksList';
+import DashboardContextProvider from './context';
 
 export const Dashboard = () => {
   const [isLoading, setLoading] = useState(true);
@@ -31,9 +32,9 @@ export const Dashboard = () => {
 
   if (isLoading) return <></>;
   return (
-    <>
+    <DashboardContextProvider>
       <Navbar />
       <ProjectsAndTasksList />
-    </>
+    </DashboardContextProvider>
   );
 }

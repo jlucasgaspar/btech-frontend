@@ -6,20 +6,21 @@ import { Modal } from '../../components/Modal';
 import { makeHttpRequest } from '../../services/api';
 import { useProjectsAndTasksContext } from '../../contexts/projects-tasks';
 import { Project } from '../../models';
+import { useDashboardContext } from './context';
 
 type Props = {
+  defaultValue?: string;
+  idForUpdate?: string;
   isOpen: boolean;
   onClose: () => void;
-  defaultValue?: string;
-  isUpdate?: boolean;
-  idForUpdate?: string;
 }
 
-export const CreateProjectModal = ({ isOpen, onClose, defaultValue, isUpdate, idForUpdate }: Props) => {
+export const ModalCreateOrUpdateProject = ({ defaultValue, idForUpdate, isOpen, onClose }: Props) => {
   const [isLoading, setLoading] = useState(false);
   const [projectName, setProjectName] = useState(defaultValue || '');
   const [error, setError] = useState('');
   const { setProjectsAndTasks, projectsAndTasks } = useProjectsAndTasksContext();
+  const { projectModalType } = useDashboardContext();
 
   useEffect(() => {
     if (defaultValue) setProjectName(defaultValue);
@@ -39,8 +40,10 @@ export const CreateProjectModal = ({ isOpen, onClose, defaultValue, isUpdate, id
 
     setLoading(true);
 
-    const method = isUpdate ? 'put' : 'post';
-    const data = isUpdate ? { name: projectName, _id: idForUpdate } : { name: projectName }
+    const method = projectModalType === 'update' ? 'put' : 'post';
+    const data = projectModalType === 'update'
+      ? { name: projectName, _id: idForUpdate }
+      : { name: projectName }
 
     const result = await makeHttpRequest<Project>(method, '/projects', data);
 
@@ -51,7 +54,7 @@ export const CreateProjectModal = ({ isOpen, onClose, defaultValue, isUpdate, id
     }
 
     setProjectsAndTasks(state => {
-      if (isUpdate) {
+      if (projectModalType === 'update') {
         return state.map(_ => _._id === idForUpdate ? { ..._, ...result.data } : _);
       }
 
@@ -63,7 +66,14 @@ export const CreateProjectModal = ({ isOpen, onClose, defaultValue, isUpdate, id
 
     setLoading(false);
     onClose();
-  }, [onClose, projectName, projectsAndTasks, setProjectsAndTasks, idForUpdate, isUpdate]);
+  }, [
+    onClose,
+    projectName,
+    projectsAndTasks,
+    setProjectsAndTasks,
+    idForUpdate,
+    projectModalType
+  ]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -86,7 +96,7 @@ export const CreateProjectModal = ({ isOpen, onClose, defaultValue, isUpdate, id
       />
 
       <Button onClick={handleCreateProject} disabled={isLoading} color="primary">
-        Create Project
+        {projectModalType === 'update' ? 'Update' : 'Create'} project
       </Button>
     </Modal>
   );

@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -6,19 +5,21 @@ import styled from 'styled-components';
 
 type Props = {
   title: string;
-  subtitle: string;
+  footerCreatedDateText: string;
+  footerTasksDoneText: string;
   onUpdate: () => void;
   onDelete: () => void;
-  children: ReactNode;
+  onPressCard: () => void;
 }
 
-export const Card = ({ title, subtitle, onUpdate, onDelete, children }: Props) => {
+export const Card = ({
+  title, footerCreatedDateText, footerTasksDoneText, onUpdate, onDelete, onPressCard
+}: Props) => {
   return (
     <Container>
       <header>
-        <main>
+        <main onClick={onPressCard}>
           <strong>{title}</strong>
-          <p>{subtitle}</p>
         </main>
 
         <div>
@@ -31,7 +32,10 @@ export const Card = ({ title, subtitle, onUpdate, onDelete, children }: Props) =
         </div>
       </header>
 
-      {children}
+      <section onClick={onPressCard}>
+        <p>{footerCreatedDateText}</p>
+        <p>{footerTasksDoneText}</p>
+      </section>
     </Container>
   );
 }
@@ -43,6 +47,12 @@ const Container = styled.div`
   margin: 5px;
   width: 400px;
 
+  :hover {
+    border: 3px solid #76b6f6;
+    padding: 8px;
+    transition: all ease 0.2s;
+  }
+
   > header {
     display: flex;
     justify-content: space-between;
@@ -51,6 +61,25 @@ const Container = styled.div`
 
     main {
       padding: 0px;
+      font-size: 20px;
+      :hover {
+        cursor: pointer;
+        color: #014b95;
+        transition: all ease 0.2s;
+      }
+    }
+  }
+
+  > section {
+    display: flex;
+    justify-content: space-between;
+    align-items: space-between;
+    color: #777;
+
+    :hover {
+      cursor: pointer;
+      color: #014b95;
+      transition: all ease 0.2s;
     }
   }
 `;

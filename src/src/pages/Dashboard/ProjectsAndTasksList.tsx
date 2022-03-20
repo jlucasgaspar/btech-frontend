@@ -7,14 +7,21 @@ import { useUserContext } from '../../contexts/user';
 import { ProjectAndTasks } from '../../models';
 import { makeHttpRequest } from '../../services/api';
 import { Card } from '../../components/Card';
-import { CreateProjectModal } from './CreateProjectModal';
+
+import { ModalCreateOrUpdateProject } from './ModalCreateOrUpdateProject';
+import { generateTasksDoneText } from './utils';
+import { ModalTasksList } from './ModalTasksList';
+import { useDashboardContext } from './context';
 
 export const ProjectsAndTasksList = () => {
   const [isLoading, setLoading] = useState(false);
-  const [updateModalDefaultValue, setUpdateModalDefaultValue] = useState('');
-  const [selectedProjectIdForUpdate, setSelectedProjectIdForUpdate] = useState('');
+  const [projectDefaultValue, setProjectDefaultValue] = useState('');
+  const [selectedTasksModalIsOpen, setSelectedTasksModalIsOpen] = useState(false);
   const { projectsAndTasks, setProjectsAndTasks } = useProjectsAndTasksContext();
   const { user } = useUserContext();
+  const {
+    setProjectModalType, projectModalType, selectedProjectId, setSelectedProjectId
+  } = useDashboardContext();
 
   useEffect(() => {
     setLoading(true);
@@ -45,27 +52,38 @@ export const ProjectsAndTasksList = () => {
   if (isLoading) return <></>;
   return (
     <Container>
-      <CreateProjectModal
-        isOpen={Boolean(updateModalDefaultValue)}
-        onClose={() => setUpdateModalDefaultValue('')}
-        defaultValue={updateModalDefaultValue}
-        idForUpdate={selectedProjectIdForUpdate}
-        isUpdate
+      <ModalCreateOrUpdateProject
+        defaultValue={projectDefaultValue}
+        idForUpdate={selectedProjectId}
+        isOpen={projectModalType !== undefined}
+        onClose={() => setProjectModalType(undefined)}
+      />
+
+      <ModalTasksList
+        isOpen={Boolean(selectedTasksModalIsOpen && selectedProjectId)}
+        onClose={() => {
+          setSelectedTasksModalIsOpen(false);
+          setSelectedProjectId('');
+        }}
       />
 
       {projectsAndTasks.map(({ _id, createdAt, name, tasks }) => (
         <Card
-          title={name}
-          subtitle={`Created at ${new Date(createdAt).toLocaleString('en-us')}`}
           key={_id}
+          title={name}
+          footerCreatedDateText={`Created: ${new Date(createdAt).toLocaleString('en-us')}`}
+          footerTasksDoneText={generateTasksDoneText(tasks)}
           onDelete={() => handleDeleteProject(_id)}
-          onUpdate={() => {
-            setUpdateModalDefaultValue(name);
-            setSelectedProjectIdForUpdate(_id);
+          onPressCard={() => {
+            setSelectedProjectId(_id);
+            setSelectedTasksModalIsOpen(true);
           }}
-        >
-          {name}
-        </Card>
+          onUpdate={() => {
+            setProjectDefaultValue(name);
+            setSelectedProjectId(_id);
+            setProjectModalType('update');
+          }}
+        />
       ))}
     </Container>
   );

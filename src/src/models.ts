@@ -12,6 +12,7 @@ export type Project = {
 }
 
 export type Task = {
+  _id: string;
   userId: string;
   projectId: string;
   title: string;

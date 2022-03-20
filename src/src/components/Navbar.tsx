@@ -12,7 +12,7 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import { useState, MouseEvent } from 'react';
 import { useUserContext } from '../contexts/user';
 import { useGlobalContext } from '../contexts/global';
-import { CreateProjectModal } from '../pages/Dashboard/CreateProjectModal';
+import { ModalCreateOrUpdateProject } from '../pages/Dashboard/ModalCreateOrUpdateProject';
 
 export const Navbar = () => {
   const [createProjectModalIsOpen, setCreateProjectModalIsOpen] = useState(false);
@@ -71,7 +71,7 @@ export const Navbar = () => {
 
   return (
     <>
-      <CreateProjectModal
+      <ModalCreateOrUpdateProject
         isOpen={createProjectModalIsOpen}
         onClose={() => setCreateProjectModalIsOpen(false)}
       />
