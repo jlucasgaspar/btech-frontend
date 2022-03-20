@@ -1,5 +1,7 @@
 import styled from 'styled-components';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'react-hot-toast';
+
 import { useProjectsAndTasksContext } from '../../contexts/projects-tasks';
 import { useUserContext } from '../../contexts/user';
 import { ProjectAndTasks } from '../../models';
@@ -26,6 +28,20 @@ export const ProjectsAndTasksList = () => {
       .finally(() => setLoading(false));
   }, [user._id, setProjectsAndTasks]);
 
+  const handleDeleteProject = useCallback(async (projectId: string) => {
+    setProjectsAndTasks(state => state.filter(_ => _._id !== projectId));
+
+    setLoading(true);
+
+    const result = await makeHttpRequest('delete', `/projects/${projectId}`);
+
+    if (result.type === 'fail') {
+      toast(result.error);
+    }
+
+    setLoading(false);
+  }, [setProjectsAndTasks]);
+
   if (isLoading) return <></>;
   return (
     <Container>
@@ -42,7 +58,7 @@ export const ProjectsAndTasksList = () => {
           title={name}
           subtitle={`Created at ${new Date(createdAt).toLocaleString('en-us')}`}
           key={_id}
-          onDelete={() => {}}
+          onDelete={() => handleDeleteProject(_id)}
           onUpdate={() => {
             setUpdateModalDefaultValue(name);
             setSelectedProjectIdForUpdate(_id);

@@ -50,10 +50,16 @@ export const CreateProjectModal = ({ isOpen, onClose, defaultValue, isUpdate, id
       return;
     }
 
-    setProjectsAndTasks(state => [
-      { ...result.data, tasks: [] },
-      ...state
-    ]);
+    setProjectsAndTasks(state => {
+      if (isUpdate) {
+        return state.map(_ => _._id === idForUpdate ? { ..._, ...result.data } : _);
+      }
+
+      return [
+        { ...result.data, tasks: [] },
+        ...state
+      ];
+    });
 
     setLoading(false);
     onClose();
