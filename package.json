@@ -30,7 +30,7 @@
     "typescript": "^4.4.2"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "yarn global add serve && server -s build",
     "dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
