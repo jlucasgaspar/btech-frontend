@@ -79,8 +79,8 @@ export const Navbar = () => {
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static">
           <Toolbar>
-            <Button color="inherit" onClick={() => setCreateProjectModalIsOpen(true)}>
-              Add new Project
+            <Button color="inherit" variant="outlined" onClick={() => setCreateProjectModalIsOpen(true)}>
+              + Add new Project
             </Button>
 
             <Box sx={{ flexGrow: 1 }} />
