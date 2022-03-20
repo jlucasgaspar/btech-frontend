@@ -8,40 +8,34 @@ import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useForm } from 'react-hook-form';
 
-import { LoginApiResult, LoginFormData } from './types';
-import { loginResolver } from './utils';
+import { SendEmailFormData } from './types';
+import { sendEmailResolver } from './utils';
 
 import { makeHttpRequest } from '../../services/api';
 import { useGlobalContext } from '../../contexts/global';
-import { useUserContext } from '../../contexts/user';
 
-const resolver = loginResolver();
+const resolver = sendEmailResolver();
 
-export const LoginForm = () => {
+export const SendEmailForm = () => {
   const [isLoading, setLoading] = useState(false);
-  const { handleSubmit, formState, register } = useForm<LoginFormData>({ resolver });
+  const { handleSubmit, formState, register } = useForm<SendEmailFormData>({ resolver });
   const { setCurrentPage } = useGlobalContext();
-  const { setUser } = useUserContext();
 
-  const handleLogin = handleSubmit(async ({ email, password }) => {
+  const handleSendEmail = handleSubmit(async ({ email }) => {
     setLoading(true);
 
-    const result = await makeHttpRequest<LoginApiResult>('post', '/users/login', { email, password });
+    const result = await makeHttpRequest<boolean>('post', '/users/forgot-password', { email });
 
     if (result.type === 'fail') {
       setLoading(false);
       return toast.error(result.error);
     }
 
-    const { user, jwt } = result.data;
-
-    localStorage.setItem('bolttech::jwt', jwt);
-
-    setUser(user);
+    toast.success('Please, check your e-mail now.');
 
     setLoading(false);
 
-    setCurrentPage('dashboard');
+    setCurrentPage('changePassword');
   });
 
   return (
@@ -59,36 +53,23 @@ export const LoginForm = () => {
         disabled={isLoading}
         {...register('email')}
       />
-      <TextField
-        margin="normal"
-        required
-        fullWidth
-        label="Password"
-        type="password"
-        id="password"
-        autoComplete="current-password"
-        error={Boolean(formState.errors.password)}
-        helperText={formState.errors.password?.message}
-        disabled={isLoading}
-        {...register('password')}
-      />
       <Button
         type="submit"
         fullWidth
         variant="contained"
         sx={{ mt: 3, mb: 2 }}
-        onClick={handleLogin}
+        onClick={handleSendEmail}
         disabled={isLoading}
       >
-        Login
+        Send e-mail
       </Button>
       <Grid container justifyContent="center">
         <Grid item>
           <Link href="#" variant="body2" onClick={e => {
             e.preventDefault();
-            setCurrentPage('signup');
+            setCurrentPage('changePassword');
           }}>
-            Don't have an account? Sign Up
+            Already have a code? Click here
           </Link>
         </Grid>
       </Grid>
@@ -96,9 +77,9 @@ export const LoginForm = () => {
         <Grid item>
           <Link href="#" variant="body2" onClick={e => {
             e.preventDefault();
-            setCurrentPage('sendForgotPasswordEmail');
+            setCurrentPage('login');
           }}>
-            Forgot your password?
+            Go back to login
           </Link>
         </Grid>
       </Grid>

@@ -48,6 +48,8 @@ export const SignUpForm = () => {
 
     setUser(user);
 
+    setLoading(false);
+
     setCurrentPage('dashboard');
   });
 
@@ -121,7 +123,7 @@ export const SignUpForm = () => {
             e.preventDefault();
             setCurrentPage('login');
           }}>
-            Don't have an account? Login
+            Already have an account? Login
           </Link>
         </Grid>
       </Grid>

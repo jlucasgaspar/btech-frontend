@@ -1,6 +1,6 @@
 import { createContext, useContext, ReactNode, useState, Dispatch, SetStateAction } from 'react';
 
-type Pages = 'login' | 'signup' | 'dashboard';
+type Pages = 'login' | 'signup' | 'dashboard' | 'sendForgotPasswordEmail' | 'changePassword';
 
 type CtxState = {
   currentPage: Pages;
